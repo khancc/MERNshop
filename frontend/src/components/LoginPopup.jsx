@@ -30,11 +30,22 @@ const LoginPopup = ({ setShowLogin }) => {
 
     const response = await axios.post(newUrl, data);
     if(response.data.success){
-        setToken(response.data.token)
-        localStorage.setItem("token", response.data.token)
+        const token = response.data.token;
+        setToken(token)
+        localStorage.setItem("token", token)
 
         if (response.data.user && response.data.user._id) {
           localStorage.setItem("userId", response.data.user._id);
+        } else {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const userId = payload.id || payload.userId;
+            if (userId) {
+              localStorage.setItem("userId", userId);
+            }
+          } catch (error) {
+            console.warn("Failed to decode token for userId", error);
+          }
         }
         // Sau khi login thành công → yêu cầu kết nối MetaMask để đồng bộ
         // const [address] = await window.ethereum.request({ method: "eth_requestAccounts" });

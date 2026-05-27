@@ -102,11 +102,21 @@ const connectWallet = async () => {
       if (response.data.success) {
         console.log("orderdata: ",orderData.items);
         console.log("✅ Lấy userId từ localStorage:", localStorage.getItem("userId"))
+        let userId = localStorage.getItem("userId");
+        if (!userId && token) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            userId = payload.id || payload.userId || "";
+          } catch (error) {
+            console.warn("Failed to decode token for userId", error);
+          }
+        }
+
         navigate("/order-success", {
            state: { 
             orderId: response.data.orderId,
             productId: orderData.items.map(item => item._id),
-            userId: localStorage.getItem("userId"),
+            userId,
             total: amount.toFixed(2),
             addresWallet: localStorage.getItem("walletAddress"),
           } });

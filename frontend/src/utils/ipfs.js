@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const PINATA_API_KEY = "b023e2f484fa4de200a1";
-const PINATA_SECRET_API_KEY = "b052a82ffef8183510116df7865bcbfa8487a0067f97dbafd32403cc274ea5a0";
+const PINATA_API_KEY = "cf7480bab7234403eed6";
+const PINATA_SECRET_API_KEY = "6833fc422ca5e59dd0aa87775a33120e9b26e4bd2c4f26b6b456698ef9010d1b";
 
 export const uploadReviewToIPFS = async (reviewData, imageFiles = []) => {
   const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;

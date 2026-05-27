@@ -1,47 +1,114 @@
 # MERN Shop
 
-Dự án **MERN Shop** là một ứng dụng thương mại điện tử cơ bản được xây dựng bằng **MongoDB, Express, React, Node.js**.  
-Ngoài ra dự án có phần quản trị (admin) và các hợp đồng thông minh (contracts).
+Dự án **MERN Shop** là một ứng dụng thương mại điện tử gồm 3 phần chính: frontend (khách hàng), admin (quản trị), backend (API). Ngoài ra dự án có tích hợp blockchain (smart contract) và IPFS cho luồng thanh toán + review.
 
 ## Cấu trúc thư mục
-- `admin/` : giao diện quản trị hệ thống  
-- `backend/` : API server (Express + MongoDB)  
-- `contracts/` : các file hợp đồng thông minh (Solidity)  
-- `frontend/` : giao diện người dùng (React)  
-- `node_modules/` : thư viện phụ thuộc Node.js  
+- `admin/` : giao diện quản trị
+- `backend/` : API server (Express + MongoDB)
+- `contracts/` : smart contract (Solidity + Hardhat)
+- `frontend/` : giao diện người dùng (React)
 
 ## Yêu cầu hệ thống
-- Node.js >= 16  
-- MongoDB (cục bộ hoặc Atlas)  
-- npm hoặc yarn  
+- Node.js >= 18
+- MongoDB (Atlas hoặc local)
+- MetaMask (để demo thanh toán web3)
+- Pinata API key (để upload review lên IPFS)
 
-## Cài đặt và chạy dự án
+## Cài đặt dependencies (mỗi thư mục một lần)
 
-1. Clone repo:
-   ```bash
-   git clone https://github.com/VDTune/MERN_Shop.git
-   cd MERN_Shop
-
-2. Cài đặt dependencies cho toàn dự án:
-npm install
-
-3. Chạy backend:
+```bash
 cd backend
 npm install
-npm run start
 
-4. Chạy frontend:
+cd ../frontend
+npm install
+
+cd ../admin
+npm install
+
+cd ../contracts
+npm install
+```
+
+## Cấu hình bắt buộc
+
+### 1) MongoDB
+- Sửa URI trong `backend/config/db.js` bằng MongoDB Atlas hoặc local của bạn.
+- Nếu dùng Atlas, nhớ whitelist IP và dùng đúng user/password.
+
+### 2) JWT_SECRET (backend)
+Backend cần biến môi trường `JWT_SECRET` để ký token.
+
+PowerShell (Windows):
+```powershell
+$env:JWT_SECRET="dev-secret-1234567890-abcdef"
+```
+
+### 3) Pinata (IPFS)
+Sửa 2 biến trong `frontend/src/utils/ipfs.js`:
+- `PINATA_API_KEY`
+- `PINATA_SECRET_API_KEY`
+
+## Chạy local blockchain (Hardhat)
+
+Mở terminal 1:
+```bash
+cd contracts
+npx hardhat node
+```
+
+Mở terminal 2 (deploy contract):
+```bash
+cd contracts
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+Sau khi deploy, địa chỉ sẽ được ghi vào `contracts/deployedAddresses.json`.
+
+## MetaMask (demo local)
+- Add network:
+   - RPC: `http://127.0.0.1:8545`
+   - Chain ID: `31337`
+   - Currency: `ETH`
+- Import 1 private key từ output của `hardhat node` để có ETH test.
+
+## Chạy các service
+
+### Backend
+```bash
+cd backend
+npm run server
+```
+
+### Frontend
+```bash
 cd frontend
-npm install
-npm run start
+npm run dev
+```
 
-5. (Tùy chọn) Chạy admin:
+### Admin
+```bash
 cd admin
-npm install
-npm start
+npm run dev
+```
 
-Công nghệ sử dụng
-- MongoDB: cơ sở dữ liệu NoSQL
+## Địa chỉ chạy mặc định
+- Backend: http://localhost:4000
+- Frontend: http://localhost:5173
+- Admin: http://localhost:5174
+- Hardhat RPC: http://127.0.0.1:8545
+
+## Gợi ý demo nhanh
+1. Đăng ký / đăng nhập trên frontend.
+2. Thêm sản phẩm vào giỏ và checkout.
+3. Kết nối MetaMask và xác nhận giao dịch.
+4. Viết review kèm ảnh (upload lên IPFS).
+5. Mở admin để xem đơn hàng + review.
+
+## Công nghệ sử dụng
+- MongoDB: cơ sở dữ liệu
 - Express.js: backend API
-- React.js: frontend UI
-- Node.js: server runtime
+- React.js + Vite: frontend/admin UI
+- Node.js: runtime
+- Hardhat + Solidity: smart contract
+- IPFS/Pinata: lưu review
